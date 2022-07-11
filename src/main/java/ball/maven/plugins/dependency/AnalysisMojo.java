@@ -18,7 +18,7 @@ package ball.maven.plugins.dependency;
  * limitations under the License.
  * ##########################################################################
  */
-import ball.annotation.CompileTimeCheck;
+/* import ball.annotation.CompileTimeCheck; */
 import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
@@ -72,7 +72,7 @@ public class AnalysisMojo extends AbstractDependencyMojo {
     private static Comparator<? super Artifact> COMPARATOR =
         Comparator.comparing(ArtifactUtils::key, String.CASE_INSENSITIVE_ORDER);
 
-    @CompileTimeCheck
+    /* @CompileTimeCheck */
     private static final Pattern PATTERN =
         Pattern.compile("(?i)^(META-INF/versions/[\\p{Digit}]+/)?(?<path>.*)[.]class$");
 

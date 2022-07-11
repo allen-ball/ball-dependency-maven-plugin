@@ -52,10 +52,5 @@
     <maven.javadoc.skip>true</maven.javadoc.skip>
   </properties>
   <dependencies verbose="true">
-    <dependency>
-      <groupId>ball</groupId>
-      <artifactId>ball-util</artifactId>
-      <optional>true</optional>
-    </dependency>
   </dependencies>
 </project>

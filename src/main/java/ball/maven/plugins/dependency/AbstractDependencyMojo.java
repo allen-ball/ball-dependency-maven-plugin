@@ -18,7 +18,7 @@ package ball.maven.plugins.dependency;
  * limitations under the License.
  * ##########################################################################
  */
-import ball.annotation.CompileTimeCheck;
+/* import ball.annotation.CompileTimeCheck; */
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -47,7 +47,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
  */
 @NoArgsConstructor(access = PROTECTED) @Getter @ToString @Slf4j
 public abstract class AbstractDependencyMojo extends AbstractMojo {
-    @CompileTimeCheck
+    /* @CompileTimeCheck */
     private static final Pattern PATTERN = Pattern.compile("[\\p{Punct}\\p{Space}]+");
 
     private static final String COMPILE = "compile";
