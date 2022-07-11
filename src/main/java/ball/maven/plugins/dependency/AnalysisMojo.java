@@ -51,6 +51,7 @@ import org.apache.maven.project.MavenProject;
 
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_RESOURCES;
 import static org.apache.maven.plugins.annotations.ResolutionScope.TEST;
 
@@ -69,8 +70,7 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.TEST;
       defaultPhase = GENERATE_RESOURCES, requiresProject = true)
 @NoArgsConstructor @ToString @Slf4j
 public class AnalysisMojo extends AbstractDependencyMojo {
-    private static Comparator<? super Artifact> COMPARATOR =
-        Comparator.comparing(ArtifactUtils::key, String.CASE_INSENSITIVE_ORDER);
+    private static Comparator<? super Artifact> COMPARATOR = Comparator.comparing(ArtifactUtils::key);
 
     /* @CompileTimeCheck */
     private static final Pattern PATTERN =
@@ -81,41 +81,74 @@ public class AnalysisMojo extends AbstractDependencyMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         Set<String> scope = getScope();
-        Map<Artifact,Set<String>> map =
+        Map<Artifact,Set<String>> artifactClassNamesMap =
             project.getArtifacts().stream()
             .filter(t -> scope.contains(t.getScope()))
             .collect(toMap(k -> k, v -> classesIn(v), (t, u) -> u, () -> new TreeMap<>(COMPARATOR)));
-        List<Artifact> list = new LinkedList<>(map.keySet());
+        /*
+         * Map overlapping classes (by name) to common Set of Artifacts.
+         */
+        Map<Set<String>,Set<Artifact>> map = new TreeMap<>();
+        List<Artifact> list = new LinkedList<>(artifactClassNamesMap.keySet());
 
         while (! list.isEmpty()) {
             Artifact artifact0 = list.remove(0);
-            Set<String> set0 = map.get(artifact0);
+            Set<String> set0 = artifactClassNamesMap.get(artifact0);
 
             for (Artifact artifactN : list) {
-                Set<String> setN = map.get(artifactN);
+                Set<String> setN = artifactClassNamesMap.get(artifactN);
+
+                log.debug(EMPTY);
 
                 if (! Collections.disjoint(set0, setN)) {
-                    log.info("");
+                    Set<String> key = new TreeSet<>();
+
+                    key.addAll(set0);
+                    key.retainAll(setN);
+
+                    Collections.addAll(map.computeIfAbsent(key, k -> new TreeSet<>(COMPARATOR)),
+                                       artifact0, artifactN);
 
                     if (set0.equals(setN)) {
-                        log.info("{} and {} contain the same class entries", artifact0, artifactN);
+                        log.debug("{} and {} contain the same class entries", artifact0, artifactN);
                     } else if (set0.contains(setN)) {
-                        log.info("{} fully contains {} class entries", artifact0, artifactN);
+                        log.debug("{} fully contains {} class entries", artifact0, artifactN);
                     } else if (setN.contains(set0)) {
-                        log.info("{} fully contains {} class entries", artifactN, artifact0);
+                        log.debug("{} fully contains {} class entries", artifactN, artifact0);
                     } else {
-                        Set<String> common = new TreeSet<>();
-
-                        common.addAll(set0);
-                        common.retainAll(setN);
-
-                        log.info("{} and {} contain {} common class entries", artifact0, artifactN, common.size());
+                        log.debug("{} and {} contain {} common class entries", artifact0, artifactN, key.size());
                     }
                 } else {
-                    log.debug("");
                     log.debug("{} and {} contain disjoint class entries", artifact0, artifactN);
                 }
             }
+        }
+
+        if (! map.isEmpty()) {
+            for (Map.Entry<Set<String>,Set<Artifact>> entry : map.entrySet()) {
+                Set<String> names = entry.getKey();
+                Set<Artifact> artifacts = entry.getValue();
+
+                log.info(EMPTY);
+                log.info(EMPTY);
+
+                int limit = 10;
+
+                names.stream()
+                    .limit(limit)
+                    .forEach(t -> log.info("{}", t));
+
+                if (names.size() > limit) {
+                    log.info("... ({} more classes)", names.size() - limit);
+                }
+
+                log.info(EMPTY);
+
+                artifacts.stream()
+                    .forEach(t -> log.info(" {} {}", t, t.getDependencyTrail()));
+            }
+        } else {
+            log.info("No artifacts with overlapping classes were detected.");
         }
     }
 
