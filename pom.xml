@@ -27,7 +27,7 @@
   <version>1.0.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>${project.groupId}:${project.artifactId}</name>
-  <description>Javadoc Maven Plugin</description>
+  <description>Dependency Maven Plugin</description>
   <url>https://github.com/allen-ball/ball-dependency-maven-plugin</url>
   <parent>
     <groupId>ball</groupId>
@@ -52,5 +52,10 @@
     <maven.javadoc.skip>true</maven.javadoc.skip>
   </properties>
   <dependencies verbose="true">
+    <dependency>
+      <groupId>ball</groupId>
+      <artifactId>ball-util</artifactId>
+      <optional>true</optional>
+    </dependency>
   </dependencies>
 </project>
