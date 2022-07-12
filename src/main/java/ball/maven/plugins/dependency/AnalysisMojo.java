@@ -25,8 +25,10 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -88,7 +90,7 @@ public class AnalysisMojo extends AbstractDependencyMojo {
         /*
          * Map overlapping classes (by name) to common Set of Artifacts.
          */
-        Map<Set<String>,Set<Artifact>> map = new TreeMap<>();
+        Map<Set<String>,Set<Artifact>> map = new HashMap<>();
         List<Artifact> list = new LinkedList<>(artifactClassNamesMap.keySet());
 
         while (! list.isEmpty()) {
@@ -139,7 +141,7 @@ public class AnalysisMojo extends AbstractDependencyMojo {
                     .forEach(t -> log.info("{}", t));
 
                 if (names.size() > limit) {
-                    log.info("... ({} more classes)", names.size() - limit);
+                    log.info("... with {} more classes", names.size() - limit);
                 }
 
                 log.info(EMPTY);
@@ -151,6 +153,8 @@ public class AnalysisMojo extends AbstractDependencyMojo {
             log.info("No artifacts with overlapping classes were detected.");
         }
     }
+
+    private List<String> IGNORE = Arrays.asList("module-info");
 
     private Set<String> classesIn(Artifact artifact) {
         URL url = toURL(artifact);
@@ -165,6 +169,7 @@ public class AnalysisMojo extends AbstractDependencyMojo {
                 .map(PATTERN::matcher)
                 .filter(t -> t.matches())
                 .map(t -> t.group("path"))
+                .filter(t -> (! IGNORE.contains(t)))
                 .map(t -> t.replaceAll("/", "."))
                 .collect(toSet());
         } catch (ZipException exception) {
