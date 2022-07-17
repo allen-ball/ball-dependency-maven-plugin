@@ -15,7 +15,7 @@
     <relativePath>../GitHub/javadoc/pom.xml</relativePath>
   </parent>
   <properties>
-    <ball-dependency-maven-plugin.version>1.0.0=SNAPSHOT</ball-dependency-maven-plugin.version>
+    <ball-dependency-maven-plugin.version>1.0.0-SNAPSHOT</ball-dependency-maven-plugin.version>
     <javadoc.artifact>${project.artifactId}</javadoc.artifact>
     <javadoc.version>${ball-dependency-maven-plugin.version}</javadoc.version>
     <maven.compiler.source>8</maven.compiler.source>
