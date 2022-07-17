@@ -132,7 +132,6 @@ public class AnalysisMojo extends AbstractDependencyMojo {
                 Set<Artifact> artifacts = entry.getValue();
 
                 log.info(EMPTY);
-                log.info(EMPTY);
 
                 int limit = 10;
 
@@ -144,10 +143,8 @@ public class AnalysisMojo extends AbstractDependencyMojo {
                     log.info("... with {} more classes", names.size() - limit);
                 }
 
-                log.info(EMPTY);
-
                 artifacts.stream()
-                    .forEach(t -> log.info(" {} {}", t, t.getDependencyTrail()));
+                    .forEach(t -> log.info("{} {}", t, t.getDependencyTrail()));
             }
         } else {
             log.info("No artifacts with overlapping classes were detected.");
