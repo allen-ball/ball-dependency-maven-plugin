@@ -39,8 +39,6 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
  *
  * {@injected.fields}
  *
- * {@maven.plugin.fields}
- *
  * {@bean.info}
  *
  * @author {@link.uri mailto:ball@hcf.dev Allen D. Ball}
