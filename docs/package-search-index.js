@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"ball.maven.plugins.dependency"},{"l":"dev.hcf.ball.ball_dependency_maven_plugin"}]
